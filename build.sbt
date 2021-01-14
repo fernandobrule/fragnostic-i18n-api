@@ -12,7 +12,7 @@ val unusedOptions = Def.setting(
   }
 )
 
-lazy val frgI18nSettings = Seq(
+lazy val frgI18nApiSettings = Seq(
   organization := "com.fragnostic",
   fork in Test := true,
   baseDirectory in Test := file("."),
@@ -43,34 +43,6 @@ lazy val frgI18nSettings = Seq(
   scalacOptions in (c, console) --= unusedOptions.value
 )
 
-lazy val frgI18nProject = Project(
-  id = "fragnostic-i18n-api-project",
-  base = file(".")).settings(
-    frgI18nSettings ++ Seq(
-    name := "fragnostic i18n api",
-    artifacts := Classpaths.artifactDefs(Seq(packageDoc in Compile, makePom in Compile)).value,
-    packagedArtifacts := Classpaths.packaged(Seq(packageDoc in Compile, makePom in Compile)).value,
-    description := "fragnostic i18n api",
-    shellPrompt := { state =>
-      s"sbt:${Project.extract(state).currentProject.id}" + Def.withColor("> ", Option(scala.Console.CYAN))
-    }
-  ) ++ Defaults.packageTaskSettings(
-    packageDoc in Compile, (unidoc in Compile).map(_.flatMap(Path.allSubpaths))
-  )).aggregate(
-    frgI18nApi
-  ).enablePlugins(ScalaUnidocPlugin)
-
-lazy val frgI18nApi = Project(
-  id = "fragnostic-i18n-api",
-  base = file("fragnostic-i18n-api")).settings(frgI18nSettings ++ Seq(
-    libraryDependencies ++= Seq(
-    ),
-    description := "fragnostic i18n api"
-  )
-) dependsOn(
-  //
-)
-
 lazy val manifestSetting = packageOptions += {
   Package.ManifestAttributes(
     "Created-By" -> "Simple Build Tool",
@@ -88,8 +60,8 @@ lazy val manifestSetting = packageOptions += {
 
 // Things we care about primarily because Maven Central demands them
 lazy val mavenCentralFrouFrou = Seq(
-  homepage := Some(new URL("http://www.notyet.com.br")),
-  startYear := Some(2019),
+  homepage := Some(new URL("http://www.fragnostic.com.br")),
+  startYear := Some(2020),
   pomExtra := pomExtra.value ++ Group(
     <developers>
       <developer>
@@ -102,3 +74,31 @@ lazy val mavenCentralFrouFrou = Seq(
 )
 
 lazy val doNotPublish = Seq(publish := {}, publishLocal := {}, PgpKeys.publishSigned := {}, PgpKeys.publishLocalSigned := {})
+
+lazy val frgI18nApiProject = Project(
+  id = "fragnostic-i18n-api-project",
+  base = file(".")).settings(
+    frgI18nApiSettings ++ Seq(
+    name := "fragnostic i18n api project",
+    artifacts := Classpaths.artifactDefs(Seq(packageDoc in Compile, makePom in Compile)).value,
+    packagedArtifacts := Classpaths.packaged(Seq(packageDoc in Compile, makePom in Compile)).value,
+    description := "A Fragnostic I18N API",
+    shellPrompt := { state =>
+      s"sbt:${Project.extract(state).currentProject.id}" + Def.withColor("> ", Option(scala.Console.CYAN))
+    }
+  ) ++ Defaults.packageTaskSettings(
+    packageDoc in Compile, (unidoc in Compile).map(_.flatMap(Path.allSubpaths))
+  )).aggregate(
+    frgI18nApi
+  ).enablePlugins(ScalaUnidocPlugin)
+
+lazy val frgI18nApi = Project(
+  id = "fragnostic-i18n-api",
+  base = file("fragnostic-i18n-api")).settings(frgI18nApiSettings ++ Seq(
+    libraryDependencies ++= Seq(
+    ),
+    description := "fragnostic i18n api"
+  )
+) dependsOn(
+  //
+)
